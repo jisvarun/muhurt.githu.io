@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>शुभ मुहूर्त — आज का पंचांग और शुभ समय</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon: #5C1220;
+    --maroon-deep: #45090F;
+    --marigold: #E8A33D;
+    --gold: #B8862F;
+    --ivory: #FBF4E8;
+    --teal: #1F4D3D;
+    --vermillion: #BE3D2A;
+    --ink: #2A1810;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    background: var(--ivory);
+    color: var(--ink);
+    font-family: 'Mukta', sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+
+  h1,h2,h3,.display-font{
+    font-family: 'Rozha One', serif;
+    font-weight: 400;
+    color: var(--maroon-deep);
+  }
+
+  a{ text-decoration:none; }
+
+  /* ---------- Top toran / bunting border ---------- */
+  .toran-strip{
+    height: 14px;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--vermillion) 0 10px,
+      var(--marigold) 10px 20px,
+      var(--teal) 20px 30px
+    );
+  }
+
+  /* ---------- Nav ---------- */
+  .site-nav{
+    background: var(--ivory);
+    padding: 1.1rem 0;
+    border-bottom: 1px solid rgba(92,18,32,0.15);
+  }
+  .brand-mark{
+    font-family:'Rozha One', serif;
+    font-size: 1.6rem;
+    color: var(--maroon-deep);
+    display:flex;
+    align-items:center;
+    gap: .6rem;
+  }
+  .brand-mark svg{ width:34px; height:34px; }
+  .site-nav .nav-link{
+    color: var(--ink);
+    font-weight: 600;
+    margin-left: 1.6rem;
+    position: relative;
+    padding-bottom: 4px;
+  }
+  .site-nav .nav-link::after{
+    content:"";
+    position:absolute;
+    left:0; bottom:0;
+    width:0%; height:2px;
+    background: var(--vermillion);
+    transition: width .25s ease;
+  }
+  .site-nav .nav-link:hover::after{ width:100%; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position: relative;
+    padding: 4.5rem 0 3.5rem;
+    overflow: hidden;
+  }
+  .hero .eyebrow-date{
+    font-weight:600;
+    color: var(--teal);
+    letter-spacing: .3px;
+    font-size: 1.05rem;
+    margin-bottom: .5rem;
+  }
+  .hero h1{
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    line-height: 1.15;
+    max-width: 11ch;
+  }
+  .hero p.lead-copy{
+    max-width: 46ch;
+    font-size: 1.12rem;
+    color: #4A3527;
+  }
+  .muhurat-highlight{
+    background: var(--maroon);
+    color: var(--ivory);
+    border-radius: 6px;
+    padding: 1.5rem 1.8rem;
+    margin-top: 1.8rem;
+    display:inline-block;
+    position: relative;
+  }
+  .muhurat-highlight .m-label{
+    font-size: .95rem;
+    color: var(--marigold);
+    font-weight: 600;
+    margin-bottom: .2rem;
+  }
+  .muhurat-highlight .m-time{
+    font-family:'Rozha One', serif;
+    font-size: 2.1rem;
+    line-height: 1.1;
+  }
+  .muhurat-highlight .m-sub{
+    font-size: .9rem;
+    color: #E9D9C9;
+    margin-top: .3rem;
+  }
+
+  .diya-wrap{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height: 100%;
+  }
+  .flame{
+    transform-origin: 50% 100%;
+    animation: flicker 2.6s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{ transform: scaleY(1) rotate(0deg); }
+    30%{ transform: scaleY(1.08) rotate(-1.5deg); }
+    60%{ transform: scaleY(0.95) rotate(1.5deg); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .flame{ animation: none; }
+  }
+
+  /* ---------- Panchang ledger strip ---------- */
+  .panchang-strip{
+    background: var(--maroon-deep);
+    color: var(--ivory);
+    padding: 2.2rem 0;
+  }
+  .panchang-item{
+    text-align:center;
+    padding: 0 1rem;
+    border-left: 1px solid rgba(251,244,232,0.18);
+  }
+  .panchang-item:first-child{ border-left: none; }
+  .panchang-item .p-label{
+    font-size: .82rem;
+    color: var(--marigold);
+    font-weight: 600;
+    margin-bottom: .35rem;
+  }
+  .panchang-item .p-value{
+    font-family:'Rozha One', serif;
+    font-size: 1.25rem;
+  }
+
+  /* ---------- Section heading ---------- */
+  .section-pad{ padding: 4.5rem 0; }
+  .section-head{
+    max-width: 62ch;
+    margin-bottom: 2.8rem;
+  }
+  .section-head h2{
+    font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+  }
+  .section-head p{
+    color: #5B4534;
+    font-size: 1.05rem;
+  }
+
+  /* ---------- Ceremony rows (alternating, not identical cards) ---------- */
+  .ceremony-row{
+    display:flex;
+    align-items:center;
+    gap: 2rem;
+    padding: 1.6rem 0;
+    border-bottom: 1px solid rgba(92,18,32,0.12);
+  }
+  .ceremony-row:first-of-type{ border-top: 1px solid rgba(92,18,32,0.12); }
+  .ceremony-icon{
+    flex: 0 0 auto;
+    width: 62px; height:62px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .ceremony-icon svg{ width:30px; height:30px; }
+  .ceremony-row:nth-child(odd) .ceremony-icon{ background: var(--marigold); }
+  .ceremony-row:nth-child(even) .ceremony-icon{ background: var(--teal); }
+  .ceremony-row:nth-child(odd) .ceremony-icon svg{ stroke: var(--maroon-deep); fill: var(--maroon-deep); }
+  .ceremony-row:nth-child(even) .ceremony-icon svg{ stroke: var(--ivory); fill: var(--ivory); }
+  .ceremony-text h3{
+    font-size: 1.3rem;
+    margin-bottom: .25rem;
+  }
+  .ceremony-text p{
+    margin:0;
+    color:#5B4534;
+    font-size: .98rem;
+  }
+  .ceremony-tag{
+    flex: 0 0 auto;
+    margin-left:auto;
+    text-align:right;
+    font-size: .85rem;
+    color: var(--vermillion);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* ---------- Upcoming dates timeline ---------- */
+  .timeline{
+    position: relative;
+    padding-left: 2.2rem;
+  }
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left: 7px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: rgba(92,18,32,0.2);
+  }
+  .timeline-item{
+    position: relative;
+    padding-bottom: 2rem;
+  }
+  .timeline-item:last-child{ padding-bottom: 0; }
+  .timeline-item::before{
+    content:"";
+    position:absolute;
+    left: -2.2rem;
+    top: 4px;
+    width: 16px; height:16px;
+    border-radius:50%;
+    background: var(--vermillion);
+    border: 3px solid var(--ivory);
+    box-shadow: 0 0 0 2px rgba(190,61,42,0.35);
+  }
+  .timeline-item .t-date{
+    font-weight:700;
+    color: var(--maroon-deep);
+    font-size:1.05rem;
+  }
+  .timeline-item .t-event{
+    color:#5B4534;
+    font-size:.96rem;
+  }
+
+  /* ---------- CTA band ---------- */
+  .cta-band{
+    background: var(--vermillion);
+    color: var(--ivory);
+    padding: 3.2rem 0;
+  }
+  .cta-band h2{ color: var(--ivory); font-size: clamp(1.6rem,3vw,2.2rem); }
+  .btn-ivory{
+    background: var(--ivory);
+    color: var(--vermillion);
+    font-weight:700;
+    padding: .7rem 1.8rem;
+    border-radius: 4px;
+    border: none;
+  }
+  .btn-ivory:hover{ background: #fff; color: var(--vermillion); }
+
+  /* ---------- Footer ---------- */
+  footer{
+    background: var(--maroon-deep);
+    color: #E9D9C9;
+    padding: 2.6rem 0 1.6rem;
+  }
+  footer a{ color: var(--marigold); }
+  footer .f-brand{
+    font-family:'Rozha One', serif;
+    color: var(--ivory);
+    font-size: 1.3rem;
+  }
+  footer hr{ border-color: rgba(251,244,232,0.15); margin: 1.6rem 0 1rem; }
+  footer .f-small{ font-size: .85rem; color: #C9B39E; }
+
+  @media (max-width: 767px){
+    .panchang-item{ border-left:none; border-top: 1px solid rgba(251,244,232,0.18); padding-top: .8rem; margin-top:.8rem; }
+    .panchang-item:first-child{ border-top:none; margin-top:0; padding-top:0; }
+    .ceremony-tag{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toran-strip"></div>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="container d-flex align-items-center justify-content-between flex-wrap">
+    <a href="#" class="brand-mark">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" fill="none" stroke="#B8862F" stroke-width="1.5"/>
+        <path d="M20 8c2 4-2 6-2 10s3 6 3 6-6 1-8-4-1-10 7-12z" fill="#E8A33D"/>
+        <circle cx="20" cy="20" r="3" fill="#5C1220"/>
+      </svg>
+      शुभ मुहूर्त
+    </a>
+    <div class="d-none d-md-flex">
+      <a href="#panchang" class="nav-link">आज का पंचांग</a>
+      <a href="#ceremonies" class="nav-link">मुहूर्त श्रेणियाँ</a>
+      <a href="#dates" class="nav-link">आगामी तिथियाँ</a>
+      <a href="#contact" class="nav-link">संपर्क करें</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="eyebrow-date">मंगलवार, 15 सितम्बर 2026 · भाद्रपद, कृष्ण पक्ष</div>
+        <h1>आज का शुभ मुहूर्त जानें, हर शुभ कार्य समय पर करें</h1>
+        <p class="lead-copy">पंचांग की गणना पर आधारित — विवाह, गृह प्रवेश, मुंडन और नामकरण जैसे शुभ कार्यों के लिए सटीक मुहूर्त, हर दिन आपके लिए।</p>
+        <div class="muhurat-highlight">
+          <div class="m-label">अभिजीत मुहूर्त</div>
+          <div class="m-time">11:52 AM – 12:41 PM</div>
+          <div class="m-sub">राहुकाल: 03:00 PM – 04:30 PM · सूर्यास्त: 06:24 PM</div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="diya-wrap">
+          <svg viewBox="0 0 240 240" width="260" height="260" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="120" cy="120" r="110" fill="none" stroke="#B8862F" stroke-width="1" opacity="0.35"/>
+            <circle cx="120" cy="120" r="88" fill="none" stroke="#B8862F" stroke-width="1" opacity="0.25"/>
+            <g class="flame">
+              <path d="M120 92c9 16-7 22-7 36 0 10 7 16 7 16s7-6 7-16c0-14-16-20-7-36z" fill="#E8A33D"/>
+              <path d="M120 104c5 9-4 12-4 20 0 5 4 9 4 9s4-4 4-9c0-8-9-11-4-20z" fill="#BE3D2A"/>
+            </g>
+            <path d="M60 150c0 22 27 40 60 40s60-18 60-40c0-8-6-12-12-9-10 5-24 9-48 9s-38-4-48-9c-6-3-12 1-12 9z" fill="#5C1220"/>
+            <ellipse cx="120" cy="150" rx="60" ry="10" fill="#45090F"/>
+            <path d="M50 150c0 6 31 11 70 11s70-5 70-11-31-11-70-11-70 5-70 11z" fill="#1F4D3D" opacity="0.9"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PANCHANG STRIP -->
+<section class="panchang-strip" id="panchang">
+  <div class="container">
+    <div class="row g-3 g-md-0">
+      <div class="col-6 col-md panchang-item">
+        <div class="p-label">तिथि</div>
+        <div class="p-value">चतुर्थी</div>
+      </div>
+      <div class="col-6 col-md panchang-item">
+        <div class="p-label">नक्षत्र</div>
+        <div class="p-value">रोहिणी</div>
+      </div>
+      <div class="col-6 col-md panchang-item">
+        <div class="p-label">योग</div>
+        <div class="p-value">शुभ</div>
+      </div>
+      <div class="col-6 col-md panchang-item">
+        <div class="p-label">करण</div>
+        <div class="p-value">बालव</div>
+      </div>
+      <div class="col-6 col-md panchang-item">
+        <div class="p-label">सूर्योदय</div>
+        <div class="p-value">06:12 AM</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CEREMONIES -->
+<section class="section-pad" id="ceremonies">
+  <div class="container">
+    <div class="section-head">
+      <h2>अवसर के अनुसार मुहूर्त</h2>
+      <p>हर शुभ कार्य के लिए ग्रहों की स्थिति अलग मायने रखती है। अपने अवसर के अनुसार अगला उपयुक्त मुहूर्त देखें।</p>
+    </div>
+
+    <div class="ceremony-row">
+      <div class="ceremony-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2c-2 3-2 5 0 7 2-2 2-4 0-7zM7 11a5 5 0 0010 0c0-2-2-3-5-3s-5 1-5 3z" fill="none" stroke-width="1.6"/></svg>
+      </div>
+      <div class="ceremony-text">
+        <h3>विवाह मुहूर्त</h3>
+        <p>वर-वधू की कुंडली मिलान सहित विवाह के लिए शुभ तिथि और समय।</p>
+      </div>
+      <div class="ceremony-tag">अगला: 22 नवंबर</div>
+    </div>
+
+    <div class="ceremony-row">
+      <div class="ceremony-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 12l8-7 8 7M6 11v8h12v-8" fill="none" stroke-width="1.6"/></svg>
+      </div>
+      <div class="ceremony-text">
+        <h3>गृह प्रवेश मुहूर्त</h3>
+        <p>नए घर में प्रवेश के लिए दिशा और समय के अनुसार शुभ दिन।</p>
+      </div>
+      <div class="ceremony-tag">अगला: 3 अक्टूबर</div>
+    </div>
+
+    <div class="ceremony-row">
+      <div class="ceremony-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3c4 0 7 3 7 7 0 3-2 5-4 6v3H9v-3c-2-1-4-3-4-6 0-4 3-7 7-7z" fill="none" stroke-width="1.6"/></svg>
+      </div>
+      <div class="ceremony-text">
+        <h3>मुंडन संस्कार मुहूर्त</h3>
+        <p>बालक के प्रथम मुंडन संस्कार के लिए नक्षत्र अनुसार शुभ समय।</p>
+      </div>
+      <div class="ceremony-tag">अगला: 29 सितम्बर</div>
+    </div>
+
+    <div class="ceremony-row">
+      <div class="ceremony-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 018-1 4 4 0 018 1c0 5.5-9 10-9 10z" fill="none" stroke-width="1.6"/></svg>
+      </div>
+      <div class="ceremony-text">
+        <h3>नामकरण मुहूर्त</h3>
+        <p>नवजात शिशु के नामकरण संस्कार हेतु उपयुक्त तिथि और समय।</p>
+      </div>
+      <div class="ceremony-tag">अगला: 18 सितम्बर</div>
+    </div>
+
+    <div class="ceremony-row">
+      <div class="ceremony-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 13l2-6h14l2 6M5 13h14v5H5zM7 18v2M17 18v2" fill="none" stroke-width="1.6"/></svg>
+      </div>
+      <div class="ceremony-text">
+        <h3>वाहन एवं संपत्ति क्रय मुहूर्त</h3>
+        <p>नया वाहन खरीदने या संपत्ति पंजीकरण के लिए शुभ मुहूर्त।</p>
+      </div>
+      <div class="ceremony-tag">अगला: 5 अक्टूबर</div>
+    </div>
+
+    <div class="ceremony-row">
+      <div class="ceremony-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 21h18M6 21V9l6-5 6 5v12M10 21v-6h4v6" fill="none" stroke-width="1.6"/></svg>
+      </div>
+      <div class="ceremony-text">
+        <h3>व्यापार शुभारंभ मुहूर्त</h3>
+        <p>नई दुकान या व्यवसाय के उद्घाटन के लिए अनुकूल समय।</p>
+      </div>
+      <div class="ceremony-tag">अगला: 11 अक्टूबर</div>
+    </div>
+  </div>
+</section>
+
+<!-- UPCOMING DATES -->
+<section class="section-pad" style="background:#F3E9D8;" id="dates">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <div class="section-head" style="margin-bottom:1.5rem;">
+          <h2>आगामी शुभ तिथियाँ</h2>
+          <p>इस माह की प्रमुख शुभ तिथियाँ, आगे की योजना बनाने के लिए।</p>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="t-date">18 सितम्बर 2026</div>
+            <div class="t-event">नामकरण एवं अन्नप्राशन के लिए उत्तम — नक्षत्र: पुष्य</div>
+          </div>
+          <div class="timeline-item">
+            <div class="t-date">29 सितम्बर 2026</div>
+            <div class="t-event">मुंडन संस्कार हेतु शुभ — तिथि: द्वितीया</div>
+          </div>
+          <div class="timeline-item">
+            <div class="t-date">3 अक्टूबर 2026</div>
+            <div class="t-event">गृह प्रवेश के लिए अत्यंत शुभ — नक्षत्र: रोहिणी</div>
+          </div>
+          <div class="timeline-item">
+            <div class="t-date">11 अक्टूबर 2026</div>
+            <div class="t-event">व्यापार शुभारंभ एवं नई शुरुआत हेतु उपयुक्त</div>
+          </div>
+          <div class="timeline-item">
+            <div class="t-date">22 नवंबर 2026</div>
+            <div class="t-event">विवाह मुहूर्त — इस वर्ष के सबसे शुभ मुहूर्तों में से एक</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band" id="contact">
+  <div class="container d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h2>अपनी जन्म तिथि अनुसार व्यक्तिगत मुहूर्त चाहिए?</h2>
+      <p class="mb-0" style="color:#F6E3DA;">जन्म कुंडली के आधार पर सटीक और व्यक्तिगत मुहूर्त सुझाव पाएं।</p>
+    </div>
+    <button class="btn-ivory">विवरण दर्ज करें</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="f-brand">शुभ मुहूर्त</div>
+        <p class="f-small mt-2">पारंपरिक पंचांग गणना पर आधारित, प्रतिदिन अद्यतन शुभ मुहूर्त जानकारी।</p>
+      </div>
+      <div class="col-md-4">
+        <div class="fw-bold mb-2" style="color:var(--ivory);">पेज</div>
+        <div class="d-flex flex-column gap-1 f-small">
+          <a href="#panchang">आज का पंचांग</a>
+          <a href="#ceremonies">मुहूर्त श्रेणियाँ</a>
+          <a href="#dates">आगामी तिथियाँ</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="fw-bold mb-2" style="color:var(--ivory);">संपर्क</div>
+        <div class="f-small">
+          <div>info@shubhmuhurat.example</div>
+          <div>+91 98XXX XXXXX</div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="f-small text-center">© 2026 शुभ मुहूर्त — सभी अधिकार सुरक्षित</div>
+  </div>
+</footer>
+
+</body>
+</html>
